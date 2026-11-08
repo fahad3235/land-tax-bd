@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Land Tax BD &#8212; Bangladesh Land Development Tax Calculator</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1 id="title">Land Tax BD</h1>
+    <p id="subtitle" class="subtitle"></p>
+  </div>
+  <button id="langBtn" class="btn ghost" type="button">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" data-tab="calc" class="active">Calculator</button>
+  <button type="button" data-tab="rates">Rate Table</button>
+  <button type="button" data-tab="history">History</button>
+  <button type="button" data-tab="data">Data</button>
+</nav>
+
+<main>
+  <!-- Calculator -->
+  <section id="secCalc" class="card">
+    <div class="field">
+      <label id="landTypeLabel" for="landType">Land type</label>
+      <select id="landType"></select>
+    </div>
+    <div class="field" id="areaClassRow">
+      <label id="areaClassLabel" for="areaClass">Area class</label>
+      <select id="areaClass"></select>
+    </div>
+    <div class="field check" id="farmRow" hidden>
+      <label><input type="checkbox" id="farmFamily" checked> <span id="farmLabel"></span></label>
+      <p class="hint" id="farmHint"></p>
+    </div>
+    <div class="field check" id="partlyRow" hidden>
+      <label><input type="checkbox" id="partlyCommercial"> <span id="partlyLabel"></span></label>
+      <p class="hint" id="partlyHint"></p>
+    </div>
+    <div class="field-row">
+      <div class="field grow">
+        <label id="amountLabel" for="amount">Land area</label>
+        <input id="amount" type="number" min="0" step="any" inputmode="decimal" placeholder="10">
+        <p class="hint" id="decEq"></p>
+      </div>
+      <div class="field">
+        <label id="unitLabel" for="unit">Unit</label>
+        <select id="unit"></select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field grow">
+        <label id="yearsLabel" for="years">Years to pay (1&#8211;10)</label>
+        <input id="years" type="number" min="1" max="10" step="1" value="1">
+        <p class="hint" id="yearsHint"></p>
+      </div>
+      <div class="field grow">
+        <label id="arrearsLabel" for="arrearsYears">Years already overdue (0&#8211;10)</label>
+        <input id="arrearsYears" type="number" min="0" max="10" step="1" value="0">
+        <p class="hint" id="arrearsHint"></p>
+      </div>
+    </div>
+    <p class="error" id="calcError" hidden></p>
+    <button id="calcBtn" class="btn primary" type="button">Calculate tax</button>
+
+    <div id="result" class="result" hidden>
+      <p id="resultLines" class="lines"></p>
+      <dl class="totals">
+        <div><dt id="resAnnualLabel">Annual tax</dt><dd id="resAnnual"></dd></div>
+        <div><dt id="resBaseLabel">Tax for selected years</dt><dd id="resBase"></dd></div>
+        <div><dt id="resPenaltyLabel">Arrears penalty</dt><dd id="resPenalty"></dd></div>
+        <div class="grand"><dt id="resTotalLabel">Total payable</dt><dd id="resTotal"></dd></div>
+      </dl>
+      <p id="resNote" class="note"></p>
+      <p id="dueLine" class="due"></p>
+      <button id="saveBtn" class="btn" type="button">Save this calculation</button>
+      <p id="saveMsg" class="ok" hidden></p>
+    </div>
+  </section>
+
+  <!-- Rate table -->
+  <section id="secRates" class="card" hidden>
+    <h2 id="ratesTitle">Default rate table</h2>
+    <p id="ratesIntro"></p>
+    <h3 id="ratesAgriTitle">Agricultural land</h3>
+    <div class="table-wrap"><table id="agriTable"></table></div>
+    <p class="hint" id="tierNote"></p>
+    <h3 id="ratesNonAgriTitle">Non-agricultural land</h3>
+    <div class="table-wrap"><table id="rateTable"></table></div>
+    <h3 id="ratesTeaTitle">Tea / coffee / rubber / orchard</h3>
+    <p id="teaRateLine"></p>
+    <h3 id="ratesPenaltyTitle">Arrears penalty</h3>
+    <p id="penaltyLine"></p>
+    <h3 id="ratesEditTitle">Edit rates</h3>
+    <div class="rate-grid">
+      <label>Dhaka core &#8212; commercial <input id="ed_dhakaCore_commercial" type="number" min="0" step="0.01"></label>
+      <label>Dhaka core &#8212; residential <input id="ed_dhakaCore_residential" type="number" min="0" step="0.01"></label>
+      <label>District HQ &#8212; commercial <input id="ed_districtHq_commercial" type="number" min="0" step="0.01"></label>
+      <label>District HQ &#8212; residential <input id="ed_districtHq_residential" type="number" min="0" step="0.01"></label>
+      <label>Other area &#8212; commercial <input id="ed_other_commercial" type="number" min="0" step="0.01"></label>
+      <label>Other area &#8212; residential <input id="ed_other_residential" type="number" min="0" step="0.01"></label>
+      <label>Tea / orchard (&#2547;/decimal) <input id="ed_tea" type="number" min="0" step="0.01"></label>
+      <label>Penalty (%/yr) <input id="ed_penalty" type="number" min="0" max="100" step="0.01"></label>
+    </div>
+    <p class="error" id="ratesError" hidden></p>
+    <p class="ok" id="ratesSaved" hidden></p>
+    <div class="btn-row">
+      <button id="ratesSave" class="btn primary" type="button">Save rates</button>
+      <button id="ratesReset" class="btn" type="button">Reset to defaults</button>
+    </div>
+    <p class="note" id="srcNote"></p>
+  </section>
+
+  <!-- History -->
+  <section id="secHistory" class="card" hidden>
+    <p id="histEmpty"></p>
+    <ul id="historyList" class="hist-list"></ul>
+    <p id="histTotalRow" hidden><strong id="histTotalLabel">Total of saved calculations</strong>: <span id="histTotal"></span></p>
+    <button id="histClear" class="btn danger" type="button" hidden>Clear history</button>
+  </section>
+
+  <!-- Data -->
+  <section id="secData" class="card" hidden>
+    <h3 id="dataExportTitle">Export data</h3>
+    <p id="dataExportHint"></p>
+    <div class="btn-row">
+      <button id="exportDownloadBtn" class="btn" type="button">Download JSON</button>
+      <button id="exportCopyBtn" class="btn" type="button">Copy JSON</button>
+    </div>
+    <p id="copyMsg" class="ok" hidden></p>
+    <h3 id="dataImportTitle">Import data</h3>
+    <p id="dataImportHint"></p>
+    <textarea id="importText" rows="5" placeholder='{"app":"land-tax-bd","version":1,...}'></textarea>
+    <p class="error" id="importError" hidden></p>
+    <p class="ok" id="importOk" hidden></p>
+    <button id="importBtn" class="btn primary" type="button">Import</button>
+    <h3 id="eraseTitle">Erase all data</h3>
+    <p id="eraseHint"></p>
+    <input id="eraseConfirm" type="text" placeholder="DELETE" autocomplete="off">
+    <p class="error" id="eraseError" hidden></p>
+    <p class="ok" id="eraseDone" hidden></p>
+    <button id="eraseBtn" class="btn danger" type="button">Erase all</button>
+  </section>
+</main>
+
+<footer>
+  <p id="disclaimer"></p>
+</footer>
+
+<script src="js/rates.js"></script>
+<script src="js/logic.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
